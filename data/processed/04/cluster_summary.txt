@@ -1,0 +1,41 @@
+
+Cluster Analysis Summary Report
+===============================
+
+1. Number of clusters identified: 4
+
+2. Cluster-wise Actor Dominance:
+cluster
+0    {'Police Forces of Lebanon (2021-)': 7.0, 'Al ...
+1    {'Military Forces of Israel (2022-)': 15282.0,...
+2    {'Civilians (Lebanon)': 1250.0, 'Civilians (Sy...
+3    {'Hezbollah': 2287.0, 'Al Aqsa Martyrs Brigade...
+
+3. Cluster-wise Region Dominance:
+cluster
+0     {'Al Nabatieh': 5.0, 'Akkar': 1.0, 'South': 1.0}
+1    {'Al Nabatieh': 8985.0, 'South': 5107.0, 'Baal...
+2    {'Al Nabatieh': 572.0, 'South': 413.0, 'Baalbe...
+3    {'Al Nabatieh': 1343.0, 'South': 655.0, 'Baalb...
+
+4. Civilian Targeting Rate per Cluster:
+cluster
+0    0.000
+1    0.084
+2    0.990
+3    0.000
+
+5. Time of Year Patterns per Cluster:
+cluster
+0              {10: 3.0, 2: 1.0, 8: 1.0}
+1    {10: 3337.0, 11: 3063.0, 9: 1758.0}
+2       {10: 421.0, 11: 401.0, 9: 189.0}
+3        {9: 743.0, 3: 261.0, 10: 161.0}
+
+Interpretation:
+---------------
+- Certain clusters are dominated by specific actors such as Military Forces of Israel (2022-), Hezbollah, Civilians (Lebanon).
+- These actors tend to operate more frequently in regions such as Al Nabatieh, South, Baalbek-Hermel.
+- Civilian targeting rates vary among clusters, with clusters 2 having notably higher rates.
+- Time-of-year analysis shows clusters with peak activity during months 10, 11, 9.
+
