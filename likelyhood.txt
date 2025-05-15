@@ -1,0 +1,67 @@
+import pandas as pd
+import numpy as np
+
+# Load the data
+data = pd.read_csv('missiles-acled-18-october-2023.csv', delimiter=';')
+
+# **Step 1: Clean and Filter Data**
+
+# Filter out rows where the event is a missile attack and the actor is 'Military Forces of Israel (2022-)'
+missile_data = data[(data['sub_event_type'].isin(['Shelling/artillery/missile attack', 'Air/drone strike'])) & 
+                    (data['actor1'] == 'Military Forces of Israel (2022-)')]
+
+# **Step 2: Handle Missing Values**
+
+# Fill missing values with appropriate methods
+# Example: Fill missing values in latitude/longitude with the mean of the column
+missile_data['latitude'] = missile_data['latitude'].fillna(missile_data['latitude'].mean())
+missile_data['longitude'] = missile_data['longitude'].fillna(missile_data['longitude'].mean())
+missile_data['fatalities'] = missile_data['fatalities'].fillna(0)  # Assuming no fatalities if missing
+
+# **Step 3: Aggregate Data by Location**
+
+# Group by location and calculate the total missile attacks and total fatalities
+agg_data = missile_data.groupby('location').agg({
+    'event_id_cnty': 'count',  # Count of missile events per location
+    'fatalities': 'sum',       # Sum of fatalities per location
+    'latitude': 'mean',        # Average latitude for mapping
+    'longitude': 'mean',       # Average longitude for mapping
+}).reset_index()
+
+# Rename columns for clarity
+agg_data.rename(columns={'event_id_cnty': 'missile_attack_count', 'fatalities': 'total_fatalities'}, inplace=True)
+
+# **Step 4: Create a PTSD Likelihood Proxy**
+
+# Create a simple PTSD likelihood proxy (1 for high likelihood, 0 for low likelihood)
+# Criteria: More than 3 missile attacks and fatalities greater than 1 means higher PTSD likelihood
+agg_data['ptsd_likelihood'] = agg_data.apply(
+    lambda row: 1 if row['missile_attack_count'] > 3 and row['total_fatalities'] > 1 else 0, axis=1
+)
+
+# **Step 5: Feature Engineering**
+
+# Select relevant features (you can add more features if needed)
+features = ['missile_attack_count', 'total_fatalities']
+
+# Prepare feature matrix (X) and target vector (y)
+X = agg_data[features]  # Features: number of missile attacks and fatalities
+y = agg_data['ptsd_likelihood']  # Target: PTSD likelihood (binary)
+
+# **Step 6: Normalize/Scale Features (if necessary)**
+
+# It's a good practice to scale features before training a model
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# **Step 7: Train-Test Split**
+
+# Split the data into training and testing sets (80% train, 20% test)
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=42)
+
+# Output the processed data to check
+print(agg_data.head())
